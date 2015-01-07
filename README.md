@@ -51,5 +51,7 @@ Drupal.modules.contrib['og'] = {};
 If you have a Group Audience field on your content type, and have its form
 widget set to an entity reference field, install the Entity Reference module in
 your DrupalGap app and follow its instructions for settings up a Views JSON
-page display to power the entity reference field (group audience) in the app.
+page display to power the entity reference field (group audience) in the app. Be
+sure to change the field's widget to "Autocomplete", by default it is probably
+set as "OG reference".
 
