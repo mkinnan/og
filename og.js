@@ -22,6 +22,19 @@ function og_field_widget_form(form, form_state, field, instance, langcode, items
   }
   catch (error) { console.log('og_field_widget_form - ' + error); }
 }
+
+/**
+ * Implements hook_assemble_form_state_into_field().
+ */
+function og_assemble_form_state_into_field(entity_type, bundle,
+  form_state_value, field, instance, langcode, delta, field_key) {
+  try {
+    // Just forward this field's assembly to the entity reference module.
+    return entityreference_assemble_form_state_into_field(entity_type, bundle,
+      form_state_value, field, instance, langcode, delta, field_key);
+  }
+  catch (error) { console.log('entityreference_assemble_form_state_into_field - ' + error); }
+}
  
 /**
  * SERVICES
