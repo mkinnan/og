@@ -3,14 +3,14 @@ og
 
 The Organic Groups module for DrupalGap.
 
-# Drupal Setup
+# Drupal Setup (optional)
 
 Step 1: Enable the Organic Groups Services module:
 
 https://www.drupal.org/project/og_services
 
-Step 2: Go to `admin/structure/services/list/drupalgap/resources` and enable the
-following permissions based on your needs:
+Step 2: Go to `admin/structure/services/list/drupalgap/resources` and optionally
+enable the following resources based on your needs:
 
 - og
  - create
@@ -46,4 +46,10 @@ Step 3: Add the module to the `app/settings.js` file:
 ```
 Drupal.modules.contrib['og'] = {};
 ```
+# Organic Group Entity Reference Fields (aka Group Audience)
+
+If you have a Group Audience field on your content type, and have its form
+widget set to an entity reference field, install the Entity Reference module in
+your DrupalGap app and follow its instructions for settings up a Views JSON
+page display to power the entity reference field (group audience) in the app.
 
