@@ -24,10 +24,7 @@ enable the following resources based on your needs:
 - user
  - groups
 
-Step 3: Enable the `DrupalGap Organic Groups` sub module that comes with the
-DrupalGap module.
-
-Step 4: Flush all of Drupal's caches.
+Step 3: Flush all of Drupal's caches.
 
 # DrupalGap Setup
 
