@@ -240,3 +240,54 @@ function og_user_leave(gid, uid, options) {
   };
   Drupal.services.call(options);
 }
+
+/**
+ * MEMBERSHIP PROXIES
+ */
+function og_membership_load(id, options) {
+  og_membership_retrieve(id, options);
+}
+
+function og_membership_save(membership, options) {
+  !membership.id ?
+      og_membership_create(membership, options) :
+      og_membership_update(membership, options);
+}
+
+/**
+ * MEMBERSHIP SERVICES
+ */
+
+function og_membership_create(membership, options) {
+  options.method = 'POST';
+  options.path = 'og_membership.json';
+  options.service = 'og_membership';
+  options.resource = 'create';
+  options.data = JSON.stringify(membership);
+  Drupal.services.call(options);
+}
+
+function og_membership_retrieve(id, options) {
+  options.method = 'GET';
+  options.path = 'og_membership/' + id + '.json';
+  options.service = 'og_membership';
+  options.resource = 'retrieve';
+  Drupal.services.call(options);
+}
+
+function og_membership_update(membership, options) {
+  options.method = 'PUT';
+  options.path = 'og_membership/' + membership.id + '.json';
+  options.service = 'og_membership';
+  options.resource = 'update';
+  options.data = JSON.stringify(membership);
+  Drupal.services.call(options);
+}
+
+function og_membership_delete(id, options) {
+  options.method = 'DELETE';
+  options.path = 'og_membership/' + id + '.json';
+  options.service = 'og_membership';
+  options.resource = 'delete';
+  Drupal.services.call(options);
+}
