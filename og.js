@@ -23,6 +23,24 @@ function og_is_member(gid) {
   return member;
 }
 
+function og_is_author(gid) {
+  var author = false;
+  var groups = og_config('user_groups');
+  if (groups && groups.length) {
+    for (var i = 0; i < groups.length; i++) {
+      var group = groups[i];
+      if (group.gid == gid) {
+        if (group.uid == Drupal.user.uid) {
+          console.log(group.uid);
+          author = true;
+          break;
+        }
+      }
+    }
+  }    
+  return author;
+}
+
 /**
  * HOOKS
  */
@@ -57,7 +75,7 @@ function og_services_request_pre_postprocess_alter(options, result) {
 function og_services_postprocess(options, result) {
   try {
     // Load the authenticated user's groups after the system connect.
-    if (options.service == 'system' && options.resource == 'connect') {
+    if ( (options.service == 'system' && options.resource == 'connect') || (options.service == 'node' && options.resource == 'create') ) {
       if (Drupal.user.uid) {
         og_user_groups(Drupal.user.uid, {
           success: function(groups) { }
@@ -88,7 +106,7 @@ function og_ui_field_formatter_view(entity_type, entity, field, instance, langco
             // Build the subscription button.
             var gid = entity[entity_primary_key(entity_type)];
             element[delta] = { theme: 'og_group_subscribe' };
-            var props = og_group_subscribe_button_properties(gid, og_is_member(gid));
+            var props = og_group_subscribe_button_properties(gid, og_is_member(gid), og_is_author(gid));
             $.extend(element[delta], props, true);
 
           break;
@@ -106,14 +124,16 @@ function og_ui_field_formatter_view(entity_type, entity, field, instance, langco
   catch (error) { console.log('og_ui_field_formatter_view - ' + error); }
 }
 
-function og_group_subscribe_button_properties(gid, member) {
+function og_group_subscribe_button_properties(gid, member, author) {
   return {
-    text: !member ? 'Subscribe to group' : 'Unsubscribe from group',
+    text: !author ? ( !member ? 'Join Group' : 'Leave Group' ) : 'You are the Group Manager',
     path: null,
     member: member,
+    author: author,
     options: {
       attributes: {
-        onclick: '_og_group_subscribe_click(this, ' + gid + ', ' + member + ')'
+        onclick: !author ? '_og_group_subscribe_click(this, ' + gid + ', ' + member + ')' : '',
+        class: !author ? ( !member ? 'og-subscribe ui-link ui-btn ui-shadow ui-corner-all' : 'og-unsubscribe ui-link ui-btn ui-shadow ui-corner-all' ) : 'og-author ui-link ui-btn ui-shadow ui-corner-all'
       }
     }
   };
@@ -139,9 +159,10 @@ function theme_og_group_subscribe(variables) {
  */
 function _og_group_subscribe_click(button, gid, member) {
   var done = function(result) {
-    var props = og_group_subscribe_button_properties(gid, og_is_member(gid));
+    var props = og_group_subscribe_button_properties(gid, og_is_member(gid), og_is_author(gid));
     $(button).text(props.text);
     $(button).attr('onclick', props.options.attributes.onclick).trigger('create');
+    $(button).attr('class', props.options.attributes.class).trigger('create');
   };
   !member ? og_user_join(gid, Drupal.user.uid, { success: done }) :
       og_user_leave(gid, Drupal.user.uid, { success: done });
